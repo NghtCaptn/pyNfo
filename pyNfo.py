@@ -99,17 +99,23 @@ file.write("Language..................: %s" % mediaNfo['media']['track'][2]['Lan
 file.write("\n")
 file.write("Channel(s)................: %s" % mediaNfo['media']['track'][2]['Channels'])
 file.write("\n")
+aBrate = round(int(mediaNfo['media']['track'][2]['BitRate']) / 1000)
+file.write("Bitrate...................: %s" % aBrate)
+file.write("\n")
 smplRate = int(mediaNfo['media']['track'][2]['SamplingRate']) / 1000
 file.write("Sample Rate...............: %skHz" % smplRate)
 file.write("\n")
-file.write("Bit Depth.................: %s-bit" % mediaNfo['media']['track'][2]['BitDepth'])
+format = mediaNfo['media']['track'][2]['Format']
+if format in 'AAC':
+	file.write("Bit Depth.................: 16-bit")
+if format in 'DTS':
+	file.write("Bit Depth.................: %s-bit" % mediaNfo['media']['track'][2]['BitDepth']) 
 file.write("\n")
 file.write("\n")
-file.write("[b]Screens:[/b]")
+file.write("[b]SCREENS:[/b]")
 file.write("\n")
 file.write("\n")
 file.write("<-------------------------: PUT SCREENS BBCODE HERE!")
 file.write("[/font]")
 print("File Saved to: %s.txt" % mediaNfo['media']['track'][0]['Title'])
-print(smplRate)
 os.remove('data.json')
