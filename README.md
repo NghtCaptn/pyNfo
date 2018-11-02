@@ -10,9 +10,7 @@ that it's the CLI version. You will also need the imdb ID number (the numbers in
 Download the files from the repsoitory and make sure that mediainfo.exe is in the same folder as pyNfo.py
 
 ### Running
-Simply ```python pyNfo.py``` in a cmd.exe and you will be prompted to enter the location of your media file. You can either drag
-and drop the file into the command prompt and it will fill out the file location for you and add quotes ```" "``` if there are spaces.
-You can also type in the file location if you want as well but make sure you add quotes otherwise you will get an exception.
+Simply run ```pyNfo.py FILENAME.mp4 -i [IMDB id WTIHOUT tt]``` and it will generate a txt file formatted in bbcode with all the infromation necessary to make a description.
 
 ### Example
 
