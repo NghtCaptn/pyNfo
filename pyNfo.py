@@ -28,16 +28,25 @@ import urllib3
 import sys, string, os, subprocess
 import random
 import datetime
+import argparse
 
+'''
 fileLocation = input("Enter File Location: ")
-type(fileLocation)
-mediaCommand = subprocess.check_call("mediainfo.exe --output=JSON --LogFile=data.json %s" % fileLocation, shell=True)
+type(fileLocation)'''
+
+parser = argparse.ArgumentParser(prog='pyNfo.py', description='Script that reads and generates media and IMDb info of a video file', usage='%(prog)s [FILENAME] [options]')
+parser.add_argument('location', metavar='Full Path To File', help='File Location')
+parser.add_argument('-i', help='IMDB id WTIHOUT TT', required=True)
+args = parser.parse_args()
+fileLocation = args.location
+imdbId = args.i
+mediaCommand = subprocess.check_call("mediainfo.exe --output=JSON --LogFile=data.json \"{0}\"".format(fileLocation), shell=True)
 
 with open('data.json', 'r') as f:
 	mediaNfo = json.load(f)
 	#print(mediaNfo)
-imdbId = input("Enter IMDb move ID: ")
-type(imdbId)
+'''imdbId = input("Enter IMDb move ID: ")
+type(imdbId)'''
 http = urllib3.PoolManager()
 url = "http://www.omdbapi.com/?apikey=b8272f7d&i=tt%s" % imdbId
 r = http.request('GET', '%s' % url)
