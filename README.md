@@ -2,7 +2,7 @@
 A simple Python Script for Windows that generates neat bbcode for your movie descriptions. Requires Python and Mediainfo CLI.
 
 # Update 11/5/2018
-The script now uses ffmpeg to generate screen shots of a video file, uploads it to imagebam then generates the correct bbcode for thumbnail links to the images. Upon completeion of the script the image files are deleted from host computer.
+The script now uses ffmpeg to generate screen shots of a video file, uploads it to imagebam then generates the correct bbcode for thumbnail links to the images. Upon completeion of the script the image files are deleted from host computer. As pyNfo uploads to imagebam it displays out the full path of each file location upon successful completion. I also fix the language field so it displays "English" as opposed to "en". The URL for the imdb info is also fixed.
 
 ### Prerequisites
 Right now this verson only works on Windows, sorry linux users, it won't take long to port a linux version. You will need the
