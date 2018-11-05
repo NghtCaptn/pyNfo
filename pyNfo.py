@@ -29,17 +29,65 @@ import sys, string, os, subprocess
 import random
 import datetime
 import argparse
+import hashlib
+import time
+import glob
+import uuid
 
 '''
 fileLocation = input("Enter File Location: ")
 type(fileLocation)'''
 
+def up(image):
+    ts = round(time.mktime(time.localtime()))
+    token = "nOGuYh64vNWDINwwev785NDNOW4cmkzI"
+    secret = "Eyt1DCUkZbuA5V5P"
+    sig3 = "CEGJ1W6HZCDE342KD7JE6GED2ZE9HKDSYSBZOHGOTT2WX3GB{}{}{}{}".format(ts, ts, token, secret).encode('utf-8')
+    o = hashlib.md5()
+    o.update(sig3)
+    encode = o.hexdigest()
+    fp = open(image, 'rb')
+    file_data = fp.read()
+    http = urllib3.PoolManager()
+    api_key = "CEGJ1W6HZCDE342K"
+    ad = str(uuid.uuid4().int)[:4]
+    q = http.request('POST',
+                     'http://www.imagebam.com/sys/API/resource/upload_image',
+                     fields={'Content-Type': 'multipart/form-data',
+                     'oauth_consumer_key': api_key,
+                     'oauth_token': token,
+                     'oauth_signature_method': 'MD5',
+                     'oauth_signature': encode,
+                     'oauth_timestamp': ts,
+                     'oauth_nonce': ts,
+                     'image': (os.path.basename(os.path.normpath(image)), file_data),
+                     'content_type': 'family',
+                     'thumb_size': '250x250'})
+    h = json.loads(q.data)
+    return '[url=' + str(h['rsp']['image']['URL']) + '][img]' + str(h['rsp']['image']['thumbnail'] + '[/img][/url]')
+
+def single(fileLocation, n):
+    i = 0
+    j = 10
+    n = int(n)
+    y = 0
+    ad = str(uuid.uuid4().int)[:4]
+    for i in range(n):
+        if j >= 60:
+            j = j - 60
+            y = 1
+        screen = subprocess.check_call("ffmpeg -ss {4}:{3}:00 -t 1 -i \"{0}\" -vframes 1 \"{5}-frame-{2}-{1}.png\"".format(fileLocation, ad, i, j, y, mTitle))
+        i += 1
+        j += 5
+
 parser = argparse.ArgumentParser(prog='pyNfo.py', description='Script that reads and generates media and IMDb info of a video file', usage='%(prog)s [FILENAME] [options]')
 parser.add_argument('location', metavar='Full Path To File', help='File Location')
 parser.add_argument('-i', help='IMDB id WTIHOUT TT', required=True)
+parser.add_argument('-n', help='NUMBER OF SCREEN SHOTS', required=True)
 args = parser.parse_args()
 fileLocation = args.location
 imdbId = args.i
+n = args.n
 mediaCommand = subprocess.check_call("mediainfo.exe --output=JSON --LogFile=data.json \"{0}\"".format(fileLocation), shell=True)
 
 with open('data.json', 'r') as f:
@@ -79,7 +127,7 @@ file.write("Director..................: %s" % data['Director'])
 file.write("\n")
 file.write("Container.................: %s / %s" % (mediaNfo['media']['track'][0]['Format'], mediaNfo['media']['track'][0]['FileExtension']))
 file.write("\n")
-file.write("IMDB......................: https://www.imdb.com/tt%s" % imdbId)
+file.write("IMDB......................: https://www.imdb.com/title/tt%s" % imdbId)
 file.write("\n")
 file.write("\n")
 file.write("[b]VIDEO[/b]")
@@ -104,12 +152,14 @@ file.write("\n")
 file.write("\n")
 file.write("Codec.....................: %s" % mediaNfo['media']['track'][2]['Format'])
 file.write("\n")
-file.write("Language..................: %s" % mediaNfo['media']['track'][2]['Language'])
+if mediaNfo['media']['track'][2]['Language'] == "en":
+	lang = "English"
+file.write("Language..................: {0}".format(lang))
 file.write("\n")
 file.write("Channel(s)................: %s" % mediaNfo['media']['track'][2]['Channels'])
 file.write("\n")
 aBrate = round(int(mediaNfo['media']['track'][2]['BitRate']) / 1000)
-file.write("Bitrate...................: %s" % aBrate)
+file.write("Bitrate...................: %s Kbps" % aBrate)
 file.write("\n")
 smplRate = int(mediaNfo['media']['track'][2]['SamplingRate']) / 1000
 file.write("Sample Rate...............: %skHz" % smplRate)
@@ -122,9 +172,29 @@ if format in 'DTS':
 file.write("\n")
 file.write("\n")
 file.write("[b]SCREENS:[/b]")
-file.write("\n")
-file.write("\n")
-file.write("<-------------------------: PUT SCREENS BBCODE HERE!")
 file.write("[/font]")
+file.write("\n")
+file.write("\n")
+mTitle = mediaNfo['media']['track'][0]['Title']
+single(fileLocation, n)
+a = []
+path = os.getcwd()
+b = []
+for filename in glob.glob(os.path.join(path, '*.png')):
+	a.append(filename)
+for l in range(len(a)):
+	b.append(up(a[l]))
+	print("Image {0} Uploaded.".format(a[l]))
+sCount = 0
+for v in range(len(b)):
+	file.write(b[v])
+	sCount = sCount + 1
+	if sCount == 4:
+		file.write('\n')
+		sCount = 0
+
+
 print("File Saved to: %s.txt" % mediaNfo['media']['track'][0]['Title'])
 os.remove('data.json')
+for rm in range(len(a)):
+	os.remove(a[rm])
