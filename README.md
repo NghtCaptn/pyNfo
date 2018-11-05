@@ -7,7 +7,7 @@ The script now uses ffmpeg to generate screen shots of a video file, uploads it 
 ### Prerequisites
 Right now this verson only works on Windows, sorry linux users, it won't take long to port a linux version. You will need the
 included CLI Versionmediainfo.exe file or you grab the latest version from https://mediaarea.net/en/MediaInfo. Again make sure
-that it's the CLI version. You will also need the imdb ID number (the numbers in the IMDb URL after the ```tt```)
+that it's the CLI version. You will also need the imdb ID number (the numbers in the IMDb URL after the ```tt```). Ensure that mediainfo and ffmpeg are both in the directory that you have set in you ```PATH``` System Environment Variable OR make sure both are present in the folder you are executing the script from. Otherwise the script WILL NOT WORK.
 
 ### Installing
 Download the files from the repsoitory and make sure that mediainfo.exe is in the same folder as pyNfo.py
